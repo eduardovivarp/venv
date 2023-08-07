@@ -35,17 +35,10 @@ df['title_fixed'] = df['title_fixed'].fillna(df['app_name'])
 #df['title_fixed']
 
 @mi_app.get("/top_generos/{year_text}")
-def valida_anio(year_text):
-    if not year_text.isdigit():
-        return False, {year_text + " no es un año válido":[]}
-    if int(year_text) <= 0 or int(year_text) >= 5000:
-        return False, {year_text + " no es un año válido":[]}
-    return True, {}
 
 def top_generos(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]}
     # filtra el anio
     filtered_df = df[df['release_date'].str.contains(year_text, case=False, na=False)]
     # obtiene todos los generos
@@ -55,12 +48,11 @@ def top_generos(year_text):
     # obtiene los top x genero
     top_x_genres_year = genre_counts.head(5)
     return {year_text:top_x_genres_year.to_list()}
- 
+
 @mi_app.get("/juegos/{year_text}")
 def juegos(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida    
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]}
     filtered_df = df[df['release_date'].str.contains(year_text, case=False, na=False)]
     # Get all the juegos in the filtered DataFrame
     todos_juegos = filtered_df['title_fixed']
@@ -70,9 +62,8 @@ def juegos(year_text):
 
 @mi_app.get("/specs/{year_text}")
 def top_specs(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida    
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]}  
     filtered_df = df[df['release_date'].str.contains(year_text, case=False, na=False)]
     # Get all the specs in the filtered DataFrame
     all_specs = filtered_df['specs'].explode()
@@ -84,9 +75,8 @@ def top_specs(year_text):
 
 @mi_app.get("/earlyaccess/{year_text}")
 def earlyaccess(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida    
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]} 
     filtered_df = df[df['release_date'].str.contains(year_text, case=False, na=False)]
     # Get all the early_acccess in the filtered DataFrame
     solo_early = filtered_df[filtered_df['early_access']==True].shape[0]
@@ -94,9 +84,8 @@ def earlyaccess(year_text):
 
 @mi_app.get("/sentiments/{year_text}")
 def sentiments(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida    
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]} 
     # filtra el anio y retiramos los que contengan reviews, por que eso no califica como sentiment
     filtered_df = df[ ( df['release_date'].str.contains(year_text, case=False, na=False) ) & (~df['sentiment'].str.contains("reviews", case=False, na=False))]
     # obtiene todos los sentiment
@@ -107,9 +96,8 @@ def sentiments(year_text):
 
 @mi_app.get("/metascores/{year_text}")
 def top_metascores(year_text):
-    es_valido, resultado_valida = valida_anio(year_text)
-    if not es_valido:
-        return resultado_valida    
+    if not year_text.indigit():
+     return {year_text + " no es válido":[]}
     filtered_df = df[df['release_date'].str.contains(year_text, case=False, na=False)]
     sorted_df = filtered_df.sort_values(by='metascore', ascending=False)
     # Tomar los primeros 5 registros con los mayores valores de 'metascore'
