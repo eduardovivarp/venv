@@ -3,39 +3,36 @@ from pydantic import BaseModel
 from typing import Optional
 mi_app = FastAPI()
 
-@mi_app.get("/") #raiz
-def index():
-    import ast
-    import pandas as pd    
-    # 1. Abrimos el archivo y lo cargamos en un dataframe
-    rows=[]
-    with open(r'steam_games.json') as f:
-        for line in f.readlines():
-            rows.append(ast.literal_eval(line))
-    df= pd.DataFrame(rows)
+#@mi_app.get("/") #raiz
+import ast
+import pandas as pd    
+# 1. Abrimos el archivo y lo cargamos en un dataframe
+rows=[]
+with open(r'steam_games.json') as f:
+    for line in f.readlines():
+        rows.append(ast.literal_eval(line))
+df= pd.DataFrame(rows)
 
-    # 2.  detectamos los valores nulos en cada columna sobre 32135 regisros
-    #nulos_por_columna = df.isnull().sum()
-    #nulos_por_columna.info
+# 2.  detectamos los valores nulos en cada columna sobre 32135 regisros
+#nulos_por_columna = df.isnull().sum()
+#nulos_por_columna.info
     
-    # 3. Estandarizamos nombres publisher, generos y title   #  # 
-    # asignamos Unknown a publisher, son 8052 nulos
-    df['publisher'] = df['publisher'].fillna("Unknown")
-    # asignamos Unknown como una serie o lista a genres, son 3283 nulos
-    lista_unk = pd.Series(['Unknown'])  
-    df['genres'] = df['genres'].fillna("Unknown")
-    for i in range(32135):
-        #print(df.loc[i, 'genres'])
-        if str(df.loc[i, 'genres'])=='Unknown':
-            df.loc[i, 'genres'] = ['Unknown']
-
-    # 29530 app_name y title son IGUALES
-    df[(df['app_name']!=df['title']) & (~df['title'].isnull())]
-    # agregamos 1 columna al dataframe para colocar asignarle el app_name en aquellos donde este nulo el title
-    df['title_fixed'] = df['title']
-    df['title_fixed'] = df['title_fixed'].fillna(df['app_name'])
-    return df
-    #df['title_fixed']
+# 3. Estandarizamos nombres publisher, generos y title   #  # 
+# asignamos Unknown a publisher, son 8052 nulos
+df['publisher'] = df['publisher'].fillna("Unknown")
+# asignamos Unknown como una serie o lista a genres, son 3283 nulos
+lista_unk = pd.Series(['Unknown'])  
+df['genres'] = df['genres'].fillna("Unknown")
+for i in range(32135):
+    #print(df.loc[i, 'genres'])
+    if str(df.loc[i, 'genres'])=='Unknown':
+        df.loc[i, 'genres'] = ['Unknown']
+# 29530 app_name y title son IGUALES
+df[(df['app_name']!=df['title']) & (~df['title'].isnull())]
+# agregamos 1 columna al dataframe para colocar asignarle el app_name en aquellos donde este nulo el title
+df['title_fixed'] = df['title']
+df['title_fixed'] = df['title_fixed'].fillna(df['app_name'])
+#df['title_fixed']
 
 @mi_app.get("/top_generos/{year_text}")
 def top_generos(year_text):
