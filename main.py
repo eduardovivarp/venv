@@ -47,7 +47,7 @@ def top_generos(year_text):
     genre_counts = all_genres.value_counts()
     # obtiene los top x genero
     top_x_genres_year = genre_counts.head(5)
-    return {year_text:top_x_genres_year.to_list()}
+    return {top_x_genres_year.to_dict()}
 
 @mi_app.get("/juegos/{year_text}")
 def juegos(year_text):
