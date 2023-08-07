@@ -37,9 +37,9 @@ df['title_fixed'] = df['title_fixed'].fillna(df['app_name'])
 @mi_app.get("/top_generos/{year_text}")
 def valida_anio(year_text):
     if not year_text.isdigit():
-        return False, {year_text + " no es un año válido",[]}
+        return False, {year_text + " no es un año válido":[]}
     if int(year_text) <= 0 or int(year_text) >= 5000:
-        return False, {year_text + " no es un año válido",[]}
+        return False, {year_text + " no es un año válido":[]}
     return True, {}
 
 def top_generos(year_text):
