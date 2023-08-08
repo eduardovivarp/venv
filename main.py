@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
+from flask import Flask, request, jsonify
+import joblib
+
 mi_app = FastAPI()
 
 #@mi_app.get("/") #raiz
@@ -105,3 +108,25 @@ def top_metascores(year_text):
     # Convertir los datos en un diccionario
     result_dict = dict(zip(top_5_records['title'].to_list(),top_5_records['metascore'].to_list()))
     return result_dict
+
+model = joblib.load('modelo_entrenado.pkl')
+
+@mi_app.route('/predict', methods=['POST'])
+def predict():
+    data = request.json  # Datos enviados en la solicitud POST
+    genero = data['genre']
+    year = data['year']
+    metascore = data['metascore']
+    earlyaccess = data['earlyaccess']
+
+    # Realizar la predicción
+    input_data = [[genero, year, metascore, earlyaccess]]
+    predicted_price = model.predict(input_data)[0]
+
+    # Construir la respuesta
+    response = {
+        "predicted_price": predicted_price,
+        "message": "Predicción exitosa"
+    }
+
+    return jsonify(response)
