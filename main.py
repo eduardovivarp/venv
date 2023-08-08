@@ -111,21 +111,21 @@ def top_metascores(year_text):
 
 model = joblib.load('modelo_entrenado.pkl')
 
-@mi_app.route('/predict', methods=['POST'])
-def predict():
+@mi_app.route('/predict')
+def predict(year:str=None,metascore:float=None):
     data = request.json  # Datos enviados en la solicitud POST
-    genero = data['genre']
+    #genero = data['genre']
     year = data['year']
     metascore = data['metascore']
-    earlyaccess = data['earlyaccess']
+    #earlyaccess = data['earlyaccess']
 
     # Realizar la predicción
-    input_data = [[genero, year, metascore, earlyaccess]]
-    predicted_price = model.predict(input_data)[0]
+    input_data = [[year, metascore]]
+    predicted_price,rmse = model.predict(input_data)[0]
 
     # Construir la respuesta
     response = {
-        "predicted_price": predicted_price,
+        "predicted_price": predicted_price, "RMSE":rmse,
         "message": "Predicción exitosa"
     }
 
